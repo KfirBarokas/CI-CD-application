@@ -35,6 +35,7 @@ pipeline {
         stage('Deploy') {
             steps {
  //               sh './deploy.sh'   // כאן תחליף למה שמתאים לך
+		echo 'deployin!!!'
             }
         }
 
