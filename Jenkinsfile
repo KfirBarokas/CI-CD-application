@@ -25,12 +25,8 @@ pipeline {
 	steps {
                 //sh 'pip install -r requirements.txt'
 		echo 'insatlling deps'
-		script {
-	            docker.build('kfirapp:dev')
-		    docker tag kfirapp:latest 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:latest
-        	}
 		sh '''docker build -t kfirapp . 
-		docker tag kfirapp 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:dev'''
+		docker tag kfirapp:latest 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:dev'''
 		
             }
         }
