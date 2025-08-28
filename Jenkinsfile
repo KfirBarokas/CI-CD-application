@@ -84,16 +84,3 @@ pipeline {
         }
     }
 }
-
-
-
-        stage('Deploy') {
-            steps {
-		  echo 'Deploying...'
-//                sh '''
-//                    docker build -t myapp:latest .
-//                    docker run -d -p 80:8000 myapp:latest
-//                '''
-            }
-        }
-
