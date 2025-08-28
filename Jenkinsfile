@@ -3,7 +3,7 @@ pipeline {
     agent { 
 	docker {
 		dockerfile {
-		    filename 'Dockerfile'
+		    image 'python:3.9-alpine'
 		}
 	}
     }
