@@ -10,8 +10,6 @@ pipeline {
         GIT_CREDENTIALS_ID = 'GITHUB_KEY'
         GIT_REPO_URL = 'https://github.com/KfirBarokas/CI-CD-application.git'
         BRANCH = 'main'
-	//AWS_ACCESS_KEY_ID     = credentials('jenkins-aws-secret-key-id')
-    	//AWS_SECRET_ACCESS_KEY = credentials('jenkins-aws-secret-access-key')
     }
 
     stages {
@@ -21,7 +19,7 @@ pipeline {
             }
         }
 
-        stage('Install dependencies') {
+        stage('Build image') {
             
 	steps {
                 //sh 'pip install -r requirements.txt'
@@ -45,11 +43,14 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            steps {
+        stage('Push to ecr') {
+            when {
+		    branch 'dev'
+	    }
+	    steps {
 		script{
 			docker.withRegistry("https://992382545251.dkr.ecr.us-east-1.amazonaws.com", "ecr:us-east-1:AWS_CREDS") {
-				docker.image("kfirapp").push()
+				docker.image("kfirapp:dev").push()
 			}
 		}
 		echo 'deployin!!!'
