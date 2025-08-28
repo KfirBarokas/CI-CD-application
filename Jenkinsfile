@@ -42,8 +42,7 @@ pipeline {
 	    }
             steps {
                 //sh 'pytest tests/test1.py'
-		sh 'python3 tests/test_calculator_logic.py'
-		sh 'python3 tests/test_calculator_app_integration.py'
+		sh 'docker run -d kfirapp sh -c "python3 -m unittest discover -s tests -v"'
                 //sh 'pytest tests/test2.py'
 		echo 'running tests'
             }
