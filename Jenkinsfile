@@ -1,6 +1,12 @@
 
 pipeline {
-    agent any
+    agent { 
+	docker {
+		dockerfile {
+		    filename 'Dockerfile'
+		}
+	}
+    }
 
     environment {
         GIT_CREDENTIALS_ID = 'GITHUB_CREDS'
