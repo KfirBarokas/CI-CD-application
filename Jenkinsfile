@@ -44,8 +44,10 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                docker.withRegistry("https://992382545251.dkr.ecr.us-east-1.amazonaws.com", "ecr:us-east-1:AWS_CREDS") {
-			docker.image("calc").push()
+		script{
+			docker.withRegistry("https://992382545251.dkr.ecr.us-east-1.amazonaws.com", "ecr:us-east-1:AWS_CREDS") {
+				docker.image("calc").push()
+			}
 		}
 		echo 'deployin!!!'
             }
