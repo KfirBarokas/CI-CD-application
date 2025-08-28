@@ -42,8 +42,8 @@ pipeline {
 	    }
             steps {
                 //sh 'pytest tests/test1.py'
-		sh 'python tests/test_calculator_logic.py'
-		sh 'python tests/test_calculator_app_integration.py'
+		sh 'python3 tests/test_calculator_logic.py'
+		sh 'python3 tests/test_calculator_app_integration.py'
                 //sh 'pytest tests/test2.py'
 		echo 'running tests'
             }
