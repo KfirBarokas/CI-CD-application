@@ -27,7 +27,7 @@ pipeline {
                 //sh 'pip install -r requirements.txt'
 		echo 'insatlling deps'
 		script {
-	            def app = docker.build('calc')
+	            def app = docker.build('kfirapp/calc')
         	    app.run('--rm -d -p 5001:5000')
         	}
 		
@@ -46,7 +46,7 @@ pipeline {
             steps {
 		script{
 			docker.withRegistry("https://992382545251.dkr.ecr.us-east-1.amazonaws.com", "ecr:us-east-1:AWS_CREDS") {
-				docker.image("calc").push()
+				docker.image("kfirapp/calc").push()
 			}
 		}
 		echo 'deployin!!!'
