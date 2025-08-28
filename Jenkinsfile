@@ -28,7 +28,7 @@ pipeline {
 		echo 'insatlling deps'
 		script {
 	            def app = docker.build('calc')
-        	    app.run('-d -p 5000:5000')
+        	    app.run('--rm -d -p 5001:5000')
         	}
 		
             }
