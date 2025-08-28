@@ -9,18 +9,19 @@ pipeline {
     environment {
         GIT_CREDENTIALS_ID = 'GITHUB_KEY'
         GIT_REPO_URL = 'https://github.com/KfirBarokas/CI-CD-application.git'
-        BRANCH = 'main'
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_REPO_URL}", branch: "${BRANCH}"
-            }
-        }
+        //stage('Checkout') {
+        //    steps {
+        //        git credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_REPO_URL}", branch: "${BRANCH}"
+        //    }
+        //}
 
         stage('Build image') {
-            
+        when {
+		branch 'dev'
+	} 
 	steps {
                 //sh 'pip install -r requirements.txt'
 		echo 'insatlling deps'
