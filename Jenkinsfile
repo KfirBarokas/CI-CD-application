@@ -2,7 +2,6 @@
 pipeline {
     agent { 
 	docker {
-	    label 'docker'
 	    image 'python:3.9-alpine'
 	}
     }
@@ -23,13 +22,14 @@ pipeline {
         }
 
         stage('Install dependencies') {
-            steps {
+            
+	steps {
                 //sh 'pip install -r requirements.txt'
 		echo 'insatlling deps'
-                sh '''
-                    docker build -t calc .
-                    docker run -d -p 5000:5000 calc
-                '''
+		script {
+	            def app = docker.build('calc')
+        	    app.run('-d -p 5000:5000')
+        	}
 		
             }
         }
