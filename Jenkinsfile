@@ -12,15 +12,6 @@ pipeline {
     }
 
     stages {
-        //stage('Checkout') {
-        //    steps {
-        //        git credentialsId: "${GIT_CREDENTIALS_ID}", url: "${GIT_REPO_URL}", branch: "${BRANCH}"
-        //    }
-        //}
-	stage('Login') {
-		steps {
-		}
-	}
 
         stage('Build image') {
         when {
