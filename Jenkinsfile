@@ -37,6 +37,8 @@ pipeline {
         stage('Run tests') {
             steps {
                 //sh 'pytest tests/test1.py'
+		sh 'python tests/test_calculator_logic.py'
+		sh 'python tests/test_calculator_app_integration.py'
                 //sh 'pytest tests/test2.py'
 		echo 'running tests'
             }
