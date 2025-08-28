@@ -25,6 +25,7 @@ pipeline {
             
 	steps {
                 //sh 'pip install -r requirements.txt'
+		// lalalal
 		echo 'insatlling deps'
 		script {
 	            def app = docker.build('kfirapp')
