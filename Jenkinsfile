@@ -25,6 +25,11 @@ pipeline {
             steps {
                 //sh 'pip install -r requirements.txt'
 		echo 'insatlling deps'
+                sh '''
+                    docker build -t calc .
+                    docker run -d -p 5000:5000 calc
+                '''
+		
             }
         }
 
