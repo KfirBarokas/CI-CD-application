@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        GIT_CREDENTIALS_ID = 'GITHUB_CREDS'
+        GIT_CREDENTIALS_ID = 'GITHUB_KEY'
         GIT_REPO_URL = 'git@github.com:KfirBarokas/CI-CD-application.git'
         BRANCH = 'main'
 	//AWS_ACCESS_KEY_ID     = credentials('jenkins-aws-secret-key-id')
