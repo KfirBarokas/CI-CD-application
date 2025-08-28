@@ -48,7 +48,7 @@ pipeline {
 		    branch 'dev'
 	    }
 	    steps {
-		sh 'docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:dev'
+//		sh 'docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:dev'
 		script{
 			docker.withRegistry("https://992382545251.dkr.ecr.us-east-1.amazonaws.com", "ecr:us-east-1:AWS_CREDS") {
 				docker.image("kfirapp:dev").push()
