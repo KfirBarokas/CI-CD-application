@@ -1,5 +1,5 @@
 from calculator_logic import add, subtract, multiply, divide
-
+# random comment
 class CalculatorApp:
     def __init__(self):
         self.current_value = 0
