@@ -35,6 +35,11 @@ pipeline {
         }
 
         stage('Run tests') {
+	    agent { 
+		docker {
+		    image 'python:3.9-alpine'
+		}
+	    }
             steps {
                 //sh 'pytest tests/test1.py'
 		sh 'python tests/test_calculator_logic.py'
