@@ -28,7 +28,6 @@ pipeline {
 		echo 'insatlling deps'
 		script {
 	            def app = docker.build('kfirapp')
-        	    //app.run('--rm -d -p 5001:5000')
         	}
 		
             }
