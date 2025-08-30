@@ -6,10 +6,10 @@ pipeline {
 	}
     }
 
-    environment {
-        GIT_CREDENTIALS_ID = 'GITHUB_KEY'
-        GIT_REPO_URL = 'https://github.com/KfirBarokas/CI-CD-application.git'
-    }
+    //environment {
+    //    GIT_CREDENTIALS_ID = 'GITHUB_KEY'
+    //    GIT_REPO_URL = 'https://github.com/KfirBarokas/CI-CD-application.git'
+    //}
 
     stages {
 
@@ -19,7 +19,6 @@ pipeline {
 	} 
 	steps {
                 //sh 'pip install -r requirements.txt'
-		echo 'insatlling deps'
 		sh '''docker build -t kfirapp . 
 		docker tag kfirapp:latest 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:dev'''
 		
@@ -43,8 +42,12 @@ pipeline {
 		    branch 'dev'
 	    }
 	    steps {
-		sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com'
-		sh 'docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:dev'
+		//sh 'docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:dev'
+		script{
+			docker.withRegistry("https://992382545251.dkr.ecr.us-east-1.amazonaws.com", "AWS_INSTANCE_ROLE") {
+				docker.image("kfirapp:dev").push()
+			}
+		}
 		echo 'deployin!!!'
             }
         }
