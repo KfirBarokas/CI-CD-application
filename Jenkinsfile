@@ -2,14 +2,10 @@
 pipeline {
     agent { 
 	docker {
+	    // because we are using an agent, the agent's container needs aws-cli installed
 	    image 'jenkins-docker-aws-agent:latest'
 	}
     }
-
-    //environment {
-    //    GIT_CREDENTIALS_ID = 'GITHUB_KEY'
-    //    GIT_REPO_URL = 'https://github.com/KfirBarokas/CI-CD-application.git'
-    //}
 
     stages {
 
@@ -18,10 +14,16 @@ pipeline {
 		branch 'dev'
 	} 
 	steps {
-                //sh 'pip install -r requirements.txt'
-		sh '''docker build -t kfirapp . 
-		docker tag kfirapp:latest 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:dev'''
-		
+		script{
+			// tagging according to branch 
+			sh 'docker build -t kfirapp . '
+			if (env.BRANCH_NAME == 'dev'){
+				sh 'docker tag kfirapp:latest 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:dev'
+			}
+			else if (env.BRANCH_NAME == 'main'){
+				sh 'docker tag kfirapp:latest 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:latest'
+			}
+		}
             }
         }
 
@@ -38,19 +40,15 @@ pipeline {
         }
 
         stage('Push to ecr') {
-            when {
-		    branch 'dev'
-	    }
-	    steps {
-		// because we are using an agent, the agent's container needs aws-cli installed
-		sh '''aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com && docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:dev'''
-		//script{
-		//	docker.withRegistry("https://992382545251.dkr.ecr.us-east-1.amazonaws.com", "AWS_INSTANCE_ROLE") {
-		//		docker.image("kfirapp:dev").push()
-		//	}
-		//}
-		echo 'deployin!!!'
-            }
+		script {
+			sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com'
+                        if (env.BRANCH_NAME == 'dev'){
+                                sh 'docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:dev'
+                        }
+                        else if (env.BRANCH_NAME == 'main'){
+                                sh 'docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:latest'
+                        }
+		}
         }
 
         stage('Push changes (if any)') {
