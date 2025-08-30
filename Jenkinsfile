@@ -42,7 +42,11 @@ pipeline {
 		    branch 'dev'
 	    }
 	    steps {
-		sh '''aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com 
+		// because we are using an agent, the agent's container needs aws-cli installed
+		sh '''https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+		&& unzip awscliv2.zip
+		&& ./aws/install 
+		&& aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com 
 		&& docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:dev'''
 		//script{
 		//	docker.withRegistry("https://992382545251.dkr.ecr.us-east-1.amazonaws.com", "AWS_INSTANCE_ROLE") {
