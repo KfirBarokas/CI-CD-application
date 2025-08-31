@@ -40,14 +40,16 @@ pipeline {
         }
 
         stage('Push to ecr') {
-		script {
-			sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com'
-                        if (env.BRANCH_NAME == 'dev'){
-                                sh 'docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:dev'
-                        }
-                        else if (env.BRANCH_NAME == 'main'){
-                                sh 'docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:latest'
-                        }
+		steps{
+			script {
+				sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com'
+				if (env.BRANCH_NAME == 'dev'){
+					sh 'docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:dev'
+				}
+				else if (env.BRANCH_NAME == 'main'){
+					sh 'docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:latest'
+				}
+			}
 		}
         }
 
