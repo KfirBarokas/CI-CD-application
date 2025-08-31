@@ -2,26 +2,25 @@
 pipeline {
     agent { 
 	docker {
-	    image 'docker:latest'
+	    // because we are using an agent, the agent's container needs aws-cli installed
+	    image 'jenkins-docker-aws-agent:latest'
 	}
     }
-
-    //environment {
-    //    GIT_CREDENTIALS_ID = 'GITHUB_KEY'
-    //    GIT_REPO_URL = 'https://github.com/KfirBarokas/CI-CD-application.git'
-    //}
 
     stages {
 
         stage('Build image') {
-        when {
-		branch 'dev'
-	} 
 	steps {
-                //sh 'pip install -r requirements.txt'
-		sh '''docker build -t kfirapp . 
-		docker tag kfirapp:latest 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:dev'''
-		
+		script{
+			// tagging according to branch 
+			sh 'docker build -t kfirapp . '
+			if (env.BRANCH_NAME == 'dev'){
+				sh 'docker tag kfirapp:latest 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:dev'
+			}
+			else if (env.BRANCH_NAME == 'main'){
+				sh 'docker tag kfirapp:latest 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:latest'
+			}
+		}
             }
         }
 
@@ -38,36 +37,31 @@ pipeline {
         }
 
         stage('Push to ecr') {
-            when {
-		    branch 'dev'
-	    }
-	    steps {
-		//sh 'docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:dev'
-		script{
-			docker.withRegistry("https://992382545251.dkr.ecr.us-east-1.amazonaws.com", "AWS_INSTANCE_ROLE") {
-				docker.image("kfirapp:dev").push()
+		steps{
+			script {
+				sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com'
+				if (env.BRANCH_NAME == 'dev'){
+					sh 'docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:dev'
+				}
+				else if (env.BRANCH_NAME == 'main'){
+					sh 'docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:latest'
+				}
 			}
 		}
-		echo 'deployin!!!'
-            }
         }
 
-        stage('Push changes (if any)') {
+        stage('Deploy to production') {
             steps {
-                withCredentials([usernamePassword(credentialsId: "${GIT_CREDENTIALS_ID}", usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-                    sh '''
-                        git config user.name "jenkins"
-                        git config user.email "jenkins@example.com"
-
-                        if ! git diff --quiet; then
-                            git add .
-                            git commit -m "Auto commit by Jenkins after successful tests"
-                            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${GIT_REPO_URL#https://} HEAD:${BRANCH}
-                        else
-                            echo "No changes to push."
-                        fi
-                    '''
-                }
+		script{
+			if (env.BRANCH_NAME == 'main'){
+				// install docker 
+				sh '''ssh -i ~/kfir-key.pem ec2-user@13.221.96.99'''
+				sh '''aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com
+				&& docker pull 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:latest
+				&& docker run -it --rm kfirapp:latest
+				'''			
+			}
+		}
             }
         }
     }
