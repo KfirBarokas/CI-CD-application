@@ -10,9 +10,6 @@ pipeline {
     stages {
 
         stage('Build image') {
-        when {
-		branch 'dev'
-	} 
 	steps {
 		script{
 			// tagging according to branch 
@@ -53,22 +50,15 @@ pipeline {
 		}
         }
 
-        stage('Push changes (if any)') {
+        stage('Deploy to production') {
             steps {
-                withCredentials([usernamePassword(credentialsId: "${GIT_CREDENTIALS_ID}", usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
-                    sh '''
-                        git config user.name "jenkins"
-                        git config user.email "jenkins@example.com"
-
-                        if ! git diff --quiet; then
-                            git add .
-                            git commit -m "Auto commit by Jenkins after successful tests"
-                            git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${GIT_REPO_URL#https://} HEAD:${BRANCH}
-                        else
-                            echo "No changes to push."
-                        fi
-                    '''
-                }
+		script{
+			if (env.BRANCH_NAME == 'main'){
+				sh '''ssh -i ~/kfir-key.pem ec2-user@13.221.96.99
+				&& echo hostname
+				'''			
+			}
+		}
             }
         }
     }
