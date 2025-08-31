@@ -55,11 +55,13 @@ pipeline {
 		script{
 			if (env.BRANCH_NAME == 'main'){
 				// install docker 
-				sh '''ssh -i ~/kfir-key.pem ec2-user@13.221.96.99'''
-				sh '''aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com
-				&& docker pull 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:latest
-				&& docker run -it --rm kfirapp:latest
-				'''			
+			sh '''
+			ssh -i ~/kfir-key.pem ec2-user@13.221.96.99 "
+			  aws ecr get-login-password --region us-east-1 \
+			    | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com &&
+			  docker run --rm -p 5000:8080 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:latest
+			"
+			'''
 			}
 		}
             }
