@@ -40,6 +40,7 @@ pipeline {
 		steps{
 			script {
 				sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com'
+				echo branch
 				if (env.BRANCH_NAME == 'dev'){
 					sh 'docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/kfirapp:dev'
 				}
